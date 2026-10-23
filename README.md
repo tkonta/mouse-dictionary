@@ -1,153 +1,51 @@
-<p align="center">
-  <img width="400" src="https://github.com/wtetsu/mouse-dictionary/blob/images/logo.png" alt="Mouse Dictionary logo" />
-  <br/>
-</p>
+# Mouse Dictionary — Personal
 
-<p align="center">
-  <a href="https://github.com/wtetsu/mouse-dictionary/actions?query=workflow%3ATest"><img src="https://github.com/wtetsu/mouse-dictionary/workflows/Test/badge.svg" alt="Test" /></a>
-  <a href="https://qlty.sh/gh/wtetsu/projects/mouse-dictionary"><img src="https://qlty.sh/gh/wtetsu/projects/mouse-dictionary/maintainability.svg" alt="Maintainability" /></a>
-  <a href="https://codecov.io/gh/wtetsu/mouse-dictionary"><img src="https://codecov.io/gh/wtetsu/mouse-dictionary/branch/master/graph/badge.svg" alt="codecov" /></a>
-</p>
+[Mouse Dictionary](https://github.com/wtetsu/mouse-dictionary) をベースにした個人用のカスタム版です。この README では、本家からの変更内容とカスタム版の使い方を説明します。
 
+基本機能、辞書データの導入方法、開発方法、第三者データの情報は、[オリジナル README（本家リポジトリ）](https://github.com/wtetsu/mouse-dictionary/blob/master/README.md) を参照してください。
 
-Mouse Dictionary is a super fast browser dictionary.
+## カスタム機能
 
-<img src="https://user-images.githubusercontent.com/515948/200157867-400b7090-159c-471a-82b2-c4769df318e4.gif" />
+### 複数単語の句を優先して表示する
 
-Features:
+辞書にヒットした見出しのうち、複数単語の句を単語単体より先に表示できる設定を追加しました。
 
-- ⚡ Super quick response time (1/60 second)
-- 💡 Smart phrase detection
-- 🔍 Automatic word separation (e.g. camelCase -> camel case)
-- 📝 Option to add your own data
-- 🎨 Customizable view
+例えば、`In practice, the most ...` の `In` にマウスを合わせた場合、設定をオンにすると次の順序になります（両方の見出しが辞書にある場合）。
 
-Available for various documents:
+1. `in practice`
+2. `in`
 
-- HTML
-- PDF
-- YouTube captions
-- Notion
-- Evernote (Use with [Mouse Dictionary iframe support](https://chrome.google.com/webstore/detail/mouse-dictionary-iframe-s/nigglogmamjbcnljijokibobpcfgmdfn))
-- ...
+- **初期値はオフ**です。オフでは本家と同じ表示順になります。
+- オプション画面で「上級設定を開く」を選び、「複数単語の句を優先して表示する」をオンにして「設定を保存する」を押してください。利用中のページを再読み込みすると反映されます。
+- 句同士・単語同士の順序は従来のままです。句の長さ順への並べ替えは行いません。
+- 句の判定は、見出しの内部に空白を含むかどうかで行います。ハイフンだけでつながった語は単語側に含まれます。
+- 検索候補や辞書検索処理は変更せず、表示データのみを並べ替えます。選択文字列の検索と設定画面のプレビューにも適用されます。
+- 辞書の参照先として追加された句も優先表示の対象です。後ろに移動した短い単語の説明は、既存の省略設定に従います。
 
-## Install
+## ローカルでの利用
 
-- [For Chrome](https://chrome.google.com/webstore/detail/mouse-dictionary/dnclbikcihnpjohihfcmmldgkjnebgnj)
-- [For Firefox](https://addons.mozilla.org/ja/firefox/addon/mousedictionary/)
-- For Safari (See [#53](https://github.com/wtetsu/mouse-dictionary/pull/53))
-
-See also [Getting started](https://github.com/wtetsu/mouse-dictionary/wiki/Getting-started)
-
-## Screenshots
-
-### English-Japanese
-
-![ss02.gif](https://github.com/wtetsu/mouse-dictionary/blob/images/ss02.gif)
-
-### Japanese-English
-
-![ss03.gif](https://github.com/wtetsu/mouse-dictionary/blob/images/ss03.png)
-
-### German
-
-Want to use for the German language? Take a look these great articles!
-
-- [MOUSE DICTIONARY MIT WADOKU-WÖRTERBUCH](https://informationjapanforschung.blogspot.com/2019/06/mouse-dictionary-mit-wadoku-worterbuch.html)
-- [MOUSE DICTIONARY 2](https://informationjapanforschung.blogspot.com/2019/06/mouse-dictionary-2.html)
-
-## How to develop
-
-### Preparation
-
-Use [Node.js](https://nodejs.org/en/download/) 26+.
+Node.js 26 以上を使用します。リポジトリのディレクトリで次を実行してください。
 
 ```sh
 npm install
+npm run build-chrome
 ```
 
+Chrome または Brave の拡張機能管理画面でデベロッパーモードをオンにし、「パッケージ化されていない拡張機能を読み込む」から、このリポジトリ内の `dist-chrome` を選択します。
 
-### Build
+ソースを更新した場合は再ビルドし、拡張機能管理画面で拡張機能を再読み込みしたあと、利用中のページも再読み込みしてください。リポジトリを移動した場合は、移動先の `dist-chrome` を読み込み直してください。
 
-For Chrome:
+## ブランチとバージョン管理
 
-```sh
-npm run build-chrome   # Debug build
-npm run release-chrome # Release build
-```
+- `master`：本家の更新に追従するブランチ。
+- `personal`：個人用の機能をまとめるブランチ。
+- `feature/機能名`：必要に応じて個別機能を開発し、完成後に `personal` へ取り込むブランチ。
+- `custom-v1.7.4.1`：本家バージョン `1.7.4` をベースにした、最初の動作確認済みカスタム版。
 
-For Firefox:
+個人版のタグには `custom-` を付け、本家の `v…` タグと区別します。タグは動作確認したコミットを記録するもので、拡張機能自体のバージョン番号とは別に管理します。
 
-```sh
-npm run build-firefox   # Debug build
-npm run release-firefox # Release build
-```
+本家リポジトリは `upstream`、個人の Fork は `origin` として扱います。本家の更新を取り込む際は、`master` を更新してから `personal` へマージし、テスト・ビルド・実動作を確認します。
 
-For Safari:
+## ライセンス
 
-```sh
-npm run build-safari   # Debug build
-npm run release-safari # Release build
-```
-
-see [package.json](./package.json) for other commands.
-
-## Contribution
-
-For the moment, Mouse Dictionary project doesn't have any strict rule about contribution. Feel free to create any issues and pull requests.
-
-Some guides:
-
-- Editor: the main developer uses VSCode
-- Before you commit: try running `npm run test` and `npm run lint`
-
-## Cross-extension messaging
-
-Mouse Dictionary supports receiving [cross-extension messages](https://developer.chrome.com/extensions/messaging). [Mouse Dictionary iframe support](https://github.com/wtetsu/mouse-dictionary-iframe) is a good example that implements message sending to this extension.
-
-Here is a code example for sending a message to Mouse Dictionary. You can make Mouse Dictionary look up words/expressions from other extensions.
-
-```js
-const MD_EXTENSION_ID = "dnclbikcihnpjohihfcmmldgkjnebgnj";
-
-chrome.runtime.sendMessage(MD_EXTENSION_ID, {
-  type: "text",
-  text: "rained cats and dogs",
-});
-```
-
-Parameters:
-
-| name | type   | value                    |
-| ---- | ------ | ------------------------ |
-| type | string | must be "text"           |
-| text | string | text you want to look up |
-
-## License
-
-Mouse Dictionary is published under the MIT license.
-
-## Third-party data
-
-This project includes some third-party data:
-
-### Dictionary data
-
-- [ejdict-hand](https://github.com/kujirahand/EJDict) (Public Domain)
-
-### Images
-
-- [WPZOOM Developer Icon Set](https://www.iconfinder.com/iconsets/wpzoom-developer-icon-set) ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/))
-- [Heroicons UI icon set](https://www.iconfinder.com/iconsets/heroicons-ui) ([MIT](https://opensource.org/licenses/MIT))
-
-### Built-in PDF viewer
-
-- [Mouse Dictionary's built-in PDF viewer](https://github.com/wtetsu/pdf.js) is based on [PDF.js](https://github.com/mozilla/pdf.js) ([Apache-2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE))
-
-### Great JavaScript libraries
-
-- See [package.json](./package.json) and [license.html](https://github.com/wtetsu/mouse-dictionary/releases)
-
-## See also
-
-[Chrome 拡張の高速な英語辞書ツールをつくりました](https://qiita.com/wtetsu/items/c43232c6c44918e977c9)(a Japanese tutorial)
+本家と同じ MIT ライセンスです。[LICENSE](./LICENSE) を参照してください。第三者データのライセンス情報は、[オリジナル README](https://github.com/wtetsu/mouse-dictionary/blob/master/README.md#third-party-data) を参照してください。
