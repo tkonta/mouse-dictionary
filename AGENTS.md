@@ -26,11 +26,14 @@
 ## Git 運用
 
 - `origin` は個人の Fork、`upstream` は本家 `https://github.com/wtetsu/mouse-dictionary.git`。
-- `master` は本家追従用、`personal` は個人版を維持するブランチ。
+- GitHub上のデフォルトブランチは `personal`。個人版を維持する。
+- `master` はGitHubのデフォルトブランチとは別に、本家追従用として維持する。
 - 個別機能は必要に応じて `personal` から `feature/機能名` を作り、完成後に `personal` へマージする。
 - 本家更新は `master` を更新してから `personal` へマージする。公開済みの個人版履歴はマージで維持する。
 - 個人版タグは `custom-` 接頭辞を付ける（例：`custom-v1.7.4.1`）。動作確認済みのコミットに付け、既存タグは移動しない。
 - 個人版タグと拡張機能のバージョン番号は別に管理する。
+- `.github/workflows/release-chrome.yml` は `custom-*` タグの push でChrome版をビルドし、ZIPをGitHub Releaseへ添付する。
+- リリースタグは動作確認済みのコミットに付け、既存タグは再利用・移動しない。
 
 ## 開発環境と検証
 

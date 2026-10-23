@@ -35,10 +35,24 @@ Chrome または Brave の拡張機能管理画面でデベロッパーモード
 
 ソースを更新した場合は再ビルドし、拡張機能管理画面で拡張機能を再読み込みしたあと、利用中のページも再読み込みしてください。リポジトリを移動した場合は、移動先の `dist-chrome` を読み込み直してください。
 
+## GitHub Releases からZIPを取得する
+
+`custom-*` 形式のタグを `origin` へ push すると、GitHub Actions がChrome向けの本番ビルドを行い、ZIPを添付したGitHub Releaseを作成します。
+ForkではActionsが無効になっている場合があります。初回はGitHubの「Actions」タブを開き、ワークフローを有効にしてください。
+
+```sh
+git switch personal
+git pull --ff-only origin personal
+git tag -a custom-v1.7.4.2 -m "Personal release 1.7.4.2"
+git push origin custom-v1.7.4.2
+```
+
+タグ名は過去に使っていないものを選び、動作確認済みのコミットに付けてください。ビルドの進行状況はForkの「Actions」で確認できます。成功後は「Releases」から `mouse-dictionary-<タグ名>-chrome.zip` をダウンロードします。WindowsではZIPを展開し、ChromeまたはBraveの拡張機能管理画面でデベロッパーモードをオンにして、展開したフォルダーを読み込みます。
+
 ## ブランチとバージョン管理
 
-- `master`：本家の更新に追従するブランチ。
-- `personal`：個人用の機能をまとめるブランチ。
+- `personal`：個人版を維持するブランチ。GitHub上のデフォルトブランチです。
+- `master`：本家の更新に追従するブランチ。GitHub上のデフォルトブランチとは別に、本家追従用として維持します。
 - `feature/機能名`：必要に応じて個別機能を開発し、完成後に `personal` へ取り込むブランチ。
 - `custom-v1.7.4.1`：本家バージョン `1.7.4` をベースにした、最初の動作確認済みカスタム版。
 
