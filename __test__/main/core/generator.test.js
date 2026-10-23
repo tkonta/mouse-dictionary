@@ -76,3 +76,48 @@ test("Generator should escape headwords exactly once", () => {
   const pronunciations = [...container.querySelectorAll("[data-md-pronunciation]")];
   expect(pronunciations.map((e) => e.getAttribute("data-md-pronunciation"))).toEqual(["AT&T", "<b>"]);
 });
+
+test("Phrase priority preserves group order, filters misses, and leaves inputs unchanged", () => {
+  const words = ["in", "missing phrase", "in practice", "inside", "in fact", "invalid phrase", "well-known"];
+  const originalWords = [...words];
+  const descriptions = {
+    in: "単語",
+    "in practice": "実際には",
+    inside: "内部",
+    "in fact": "実際のところ",
+    "invalid phrase": null,
+    "well-known": "有名な",
+  };
+  const settings = {
+    ...defaultSettings,
+    contentTemplate: "{{#words}}[{{head}}:{{isFirst}}:{{isLast}}:{{isShort}}]{{/words}}",
+  };
+  const original = new Generator(settings).generate(words, descriptions);
+  expect(original.html).toBe(
+    "[in:true:false:false][in practice:false:false:false][inside:false:false:false][in fact:false:false:false][well-known:false:true:false]",
+  );
+  const prioritized = new Generator({ ...settings, prioritizePhrases: true }).generate(words, descriptions);
+  expect(prioritized.html).toBe(
+    "[in practice:true:false:false][in fact:false:false:false][in:false:false:true][inside:false:false:false][well-known:false:true:false]",
+  );
+  expect(prioritized.hitCount).toBe(original.hitCount);
+  expect(words).toEqual(originalWords);
+  expect(descriptions.in).toBe("単語");
+});
+
+test("Phrase priority handles whitespace, empty results, and a single short word", () => {
+  const generator = new Generator({
+    ...defaultSettings,
+    prioritizePhrases: true,
+    contentTemplate: "{{#words}}[{{head}}:{{isFirst}}:{{isLast}}:{{isShort}}]{{/words}}",
+  });
+  expect(generator.generate([], {}).html).toBe("");
+  expect(generator.generate(["missing phrase"], {}).html).toBe("");
+  expect(generator.generate(["in"], { in: "単語" }).html).toBe("[in:true:true:false]");
+  expect(generator.generate([" in ", "in\tpractice"], { " in ": "単語", "in\tpractice": "句" }).html).toBe(
+    "[in\tpractice:true:false:false][ in :false:true:false]",
+  );
+  expect(generator.generate(["in", "in practice"], { in: "単語", "in practice": "句" }, false).html).toBe(
+    "[in practice:true:false:false][in:false:true:false]",
+  );
+});

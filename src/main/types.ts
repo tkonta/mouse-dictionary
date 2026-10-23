@@ -22,6 +22,7 @@ export type MouseDictionaryAdvancedSettings = {
   shortWordLength: number;
   cutShortWordDescription: number;
   lookupWithCapitalized: boolean;
+  prioritizePhrases: boolean;
   parseWordsLimit: number;
   replaceRules: Replace[];
   normalDialogStyles: string;

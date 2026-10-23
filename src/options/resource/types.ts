@@ -60,6 +60,7 @@ export type TextResource = {
   stylesActive: string;
   stylesMoving: string;
   stylesInactive: string;
+  prioritizePhrases: string;
   lookupWithCapitalized: string;
   parseWordsLimit: string;
   add: string;

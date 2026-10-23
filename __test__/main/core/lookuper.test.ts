@@ -40,6 +40,35 @@ const selectText = (text: string) => {
 const updatedText = () => doUpdateContent.mock.lastCall[0].textContent;
 
 describe("lookup", () => {
+  test("should prioritize phrases in capitalized text without changing dictionary requests", async () => {
+    Object.assign((global.chrome.storage.local as any).data, {
+      in: "中に",
+      "in practice": "実際には",
+    });
+    const get = vi.spyOn(global.chrome.storage.local, "get");
+    const settings = {
+      ...defaultSettings,
+      contentTemplate: "{{#words}}[{{head}}]{{/words}}",
+    };
+    const original = await new Lookuper(settings, entryDefault(), doUpdateContent).run(
+      "In practice, the most",
+      false,
+      false,
+      true,
+    );
+    const originalRequests = get.mock.calls.map(([keys]) => keys);
+    get.mockClear();
+    const prioritized = await new Lookuper(
+      { ...settings, prioritizePhrases: true },
+      entryDefault(),
+      doUpdateContent,
+    ).run("In practice, the most", false, false, true);
+    expect(original.html).toBe("[in][in practice]");
+    expect(prioritized.html).toBe("[in practice][in]");
+    expect(prioritized.hit).toBe(original.hit);
+    expect(get.mock.calls.map(([keys]) => keys)).toEqual(originalRequests);
+  });
+
   test("should update content with the found descriptions", async () => {
     const lookuper = createLookuper();
     expect(await lookuper.lookup("dogs")).toBe(true);

@@ -61,6 +61,14 @@ export const AdvancedSettings: React.FC<AdvancedSettingsProps> = (props) => {
         />
         <span> {res.get("abbreviateShortWordDesc2")}</span>
         <label>
+          {res.get("prioritizePhrases")}
+          <input
+            type="checkbox"
+            onChange={(e) => update({ prioritizePhrases: e.target.checked })}
+            checked={props.settings?.prioritizePhrases ?? false}
+          />
+        </label>
+        <label>
           {res.get("lookupWithCapitalized")}
           <input
             type="checkbox"

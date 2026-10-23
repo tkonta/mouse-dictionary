@@ -11,6 +11,7 @@ const defaultSettings: MouseDictionarySettings = {
   cutShortWordDescription: 30,
   parseWordsLimit: 8,
   lookupWithCapitalized: false,
+  prioritizePhrases: false,
   initialPosition: "right",
   skipPdfConfirmation: false,
   pdfUrl: "",

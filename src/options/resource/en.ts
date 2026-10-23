@@ -76,6 +76,7 @@ const EnglishTextResource: TextResource = {
   stylesActive: "Style(active)",
   stylesMoving: "Style(moving)",
   stylesInactive: "Style(not active)",
+  prioritizePhrases: "Display multi-word phrases first",
   lookupWithCapitalized: "Lookup both capitalized and non-capitalized headers",
   parseWordsLimit: "Number of words to parse at once",
   add: "Add",

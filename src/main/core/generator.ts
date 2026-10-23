@@ -9,6 +9,7 @@ import type { MouseDictionarySettings, Replace } from "../types";
 
 type GeneratorSettings = Pick<
   MouseDictionarySettings,
+  | "prioritizePhrases"
   | "shortWordLength"
   | "cutShortWordDescription"
   | "headFontColor"
@@ -32,6 +33,7 @@ type WordParameter = {
 };
 
 export default class Generator {
+  prioritizePhrases: boolean;
   shortWordLength: number;
   cutShortWordDescription: number;
   baseParameters: Record<string, string>;
@@ -39,6 +41,7 @@ export default class Generator {
   contentTemplate: string;
 
   constructor(settings: GeneratorSettings) {
+    this.prioritizePhrases = settings.prioritizePhrases;
     this.shortWordLength = settings.shortWordLength;
     this.cutShortWordDescription = settings.cutShortWordDescription;
 
@@ -95,7 +98,7 @@ export default class Generator {
     descriptions: Record<string, unknown>,
     enableShortWordLength: boolean,
   ): WordParameter[] {
-    const data: WordParameter[] = [];
+    let data: WordParameter[] = [];
     const shortWordLength = enableShortWordLength ? this.shortWordLength : 0;
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
@@ -114,6 +117,16 @@ export default class Generator {
         isFirst: false,
         isLast: false,
       });
+    }
+    if (this.prioritizePhrases) {
+      // Keep the existing order within each group and leave lookup candidates untouched.
+      const phrases: WordParameter[] = [];
+      const singleWords: WordParameter[] = [];
+      for (const item of data) {
+        const group = /\S\s+\S/u.test(item.head) ? phrases : singleWords;
+        group.push(item);
+      }
+      data = phrases.concat(singleWords);
     }
     if (data.length >= 1) {
       data[0].isFirst = true;
